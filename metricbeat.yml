@@ -1,0 +1,27 @@
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+
+setup.kibana:
+  host: "http://kibana:5601"
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
+modules:
+  - module: kafka
+    metricsets: ["partition", "consumergroup"]
+    hosts: ["kafka:9092"]
+    period: 10s
+
+  - module: system
+    metricsets:
+      - cpu
+      - memory
+      - network
+    period: 10s
