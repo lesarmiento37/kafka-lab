@@ -93,6 +93,9 @@ After following the procedure of installation the terminal shows the docker cont
 And this dashboard:
 
 ![image](https://github.com/user-attachments/assets/f696241f-33c1-4a54-b110-b139b05cbd1c)
+### **10. Lab red panda**
+Consumer hello world:
+![image](https://github.com/user-attachments/assets/feca78da-6dfd-4ea2-891a-bbc90b2a75c8)
 
 
 ## **Conclusion**
