@@ -16,8 +16,16 @@ processors:
 modules:
   - module: kafka
     metricsets: ["partition", "consumergroup"]
-    hosts: ["kafka:9092"]
+    hosts: ["kafka:9093"]
     period: 10s
+    ssl:
+      certificate_authorities: ["/etc/kafka/secrets/kafka-server-cert.crt"]
+      certificate: "/etc/kafka/secrets/kafka.server.keystore.jks"
+      key: "/etc/kafka/secrets/kafka.server.keystore.jks"
+    sasl:
+      mechanism: SCRAM-SHA-512
+      username: "leonardo"
+      password: "leonardo-secret"
 
   - module: system
     metricsets:

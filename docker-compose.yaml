@@ -1,40 +1,65 @@
 version: '3.7'
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-    ports:
-      - "9200:9200"
-    networks:
-      - elk
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.6.0
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-    networks:
-      - elk
-
+  #elasticsearch:
+    #image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    #container_name: elasticsearch
+    #environment:
+      #- discovery.type=single-node
+      #- xpack.security.enabled=false
+    #ports:
+      #- "9200:9200"
+    #networks:
+      #- elk
+#
+  #kibana:
+    #image: docker.elastic.co/kibana/kibana:8.6.0
+    #container_name: kibana
+    #environment:
+      #- ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    #ports:
+      #- "5601:5601"
+    #depends_on:
+      #- elasticsearch
+    #networks:
+      #- elk
   kafka:
     image: confluentinc/cp-kafka:7.4.1
     container_name: kafka
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENERS: SASL_SSL://kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: SASL_SSL://kafka:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'SSL-INTERNAL'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.server.keystore.jks
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.server.truststore.jks
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka.server.keystore.jks
+      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.server.truststore.jks
+      KAFKA_SSL_CLIENT_AUTH: 'required'
+
+      KAFKA_SSL_KEY_PASSWORD: leonardo
+      KAFKA_SSL_KEYSTORE_PASSWORD: leonardo
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: leonardo
+      
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: kafka_truststore_creds
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: kafka_truststore_creds
+      KAFKA_SSL_KEY_CREDENTIALS: kafka_truststore_creds
+
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-512
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: SCRAM-SHA-512
+      KAFKA_LISTENER_NAME_SASL_SSL_SCRAM_SHA_512_SASL_JAAS_CONFIG: |
+        org.apache.kafka.common.security.scram.ScramLoginModule required
+        username="leonardo"
+        password="leonardo-secret";
+    volumes:
+      - ./secrets:/etc/kafka/secrets
+    ports:
+      - "9093:9093"
     depends_on:
       - zookeeper
-    ports:
-      - "9092:9092"
     networks:
       - elk
 
@@ -49,18 +74,18 @@ services:
     networks:
       - elk
 
-  metricbeat:
-    image: docker.elastic.co/beats/metricbeat:8.6.0
-    container_name: metricbeat
-    volumes:
-      - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-    user: root
-    depends_on:
-      - elasticsearch
-      - kafka
-    networks:
-      - elk
+  #metricbeat:
+    #image: docker.elastic.co/beats/metricbeat:8.6.0
+    #container_name: metricbeat
+    #volumes:
+      #- ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+      #- /var/run/docker.sock:/var/run/docker.sock
+    #user: root
+    #depends_on:
+      #- elasticsearch
+      #- kafka
+    #networks:
+      #- elk
 
 networks:
   elk:
