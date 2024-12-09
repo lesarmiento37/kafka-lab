@@ -1,6 +1,6 @@
-# ** Kafka Security **
+# **Kafka Security**
 
-## ** Testing in plaintext **
+## **Testing in plaintext**
 
 ```bash
 /opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties

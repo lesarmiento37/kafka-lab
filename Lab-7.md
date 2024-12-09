@@ -1,4 +1,4 @@
-# ** Kafka Streams: Installing Kafka **
+# **Kafka Streams: Installing Kafka**
 ## Installing kubernetes basics:
 ![image](https://github.com/user-attachments/assets/e0a9bfe8-207a-4713-af31-8a3e121c64a1)
 ## Installing Strimzi
