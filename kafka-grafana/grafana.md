@@ -166,3 +166,6 @@ This setup provides:
 - Kafka metrics visualization using Grafana.
 
 You can extend the setup to include more services or customize the dashboards as per your requirements.
+
+## Results
+![image](https://github.com/user-attachments/assets/a5203d36-9f06-433b-8128-c2e686d69061)
