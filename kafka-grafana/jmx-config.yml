@@ -1,0 +1,7 @@
+rules:
+  - pattern: "kafka.server<type=(.+), name=(.+)><>(.+)"
+    name: "kafka_server_$1_$2_$3"
+    type: GAUGE
+    labels:
+      metric: "$1_$2"
+      topic: "$3"
