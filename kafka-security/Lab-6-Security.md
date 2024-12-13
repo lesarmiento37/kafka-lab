@@ -125,4 +125,4 @@
    ./bin/kafka-topics.sh --create --topic ssl-leonardo-topic --bootstrap-server ec2-54-157-175-115.compute-1.amazonaws.com:9093 --partitions 1 --replication-factor 1 --command-config config/client.properties
    ```
 ## Results:
-leonardo
+![image](https://github.com/user-attachments/assets/c27a2a7d-a62b-4524-93cc-2dc03d74692d)
