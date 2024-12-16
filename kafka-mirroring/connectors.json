@@ -1,0 +1,13 @@
+echo "{" >> connectors.json
+echo '"name":"test_mirror",' >> connectors.json
+echo '"config": {' >> connectors.json
+echo '"connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",' >> connectors.json
+echo '"name":"test_mirror",' >> connectors.json
+echo '"source.cluster.alias":"source",' >> connectors.json
+echo '"topics":"replicate_me",' >> connectors.json
+echo '"source.cluster.bootstrap.servers":"broker:29092",' >> connectors.json
+echo '"target.cluster.bootstrap.servers":"broker2:29093",' >> connectors.json
+echo '"producer.override.bootstrap.servers":"broker2:29093",' >> connectors.json
+echo '"offset-syncs.topic.replication.factor":"1"' >> connectors.json
+echo "}" >> connectors.json
+echo "}" >> connectors.json
