@@ -79,6 +79,9 @@ Before starting this exercise, ensure you have the following:
 7. **Results:**
 After deploying the kafka ehis is the output:
 
+Check the containers:
+![image](https://github.com/user-attachments/assets/463bb277-2366-4f04-b2a6-0662a27b64ec)
+
 Create replicate_me Topic:
 ![image](https://github.com/user-attachments/assets/980925d1-f69a-40e4-bb7e-31d9a5c05448)
 
