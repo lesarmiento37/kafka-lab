@@ -12,7 +12,7 @@ processors:
 modules:
   - module: kafka
     metricsets: ["partition", "consumergroup"]
-    hosts: ["kafka:9092"]
+    hosts: ["localhost:9092"]
     period: 10s
   - module: system
     metricsets:

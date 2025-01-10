@@ -1,114 +1,65 @@
 version: '3.7'
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.4.1
-    container_name: zookeeper
-    hostname: zookeeper
+  kafka-cluster:
+    image: landoop/fast-data-dev:latest
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      ADV_HOST: 127.0.0.1 
+      RUNTESTS: 0
     ports:
-      - "2181:2181"
+      - 2181:2181
+      - 3030:3030
+      - 8081-8083:8081-8083
+      - 9581-9585:9581-9585
+      - 9092:9092
     networks:
       - kafka-net
-  kafka:
-    image: confluentinc/cp-kafka:7.4.1
-    hostname: kafka
-    container_name: kafka
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    container_name: elasticsearch
+    hostname: elasticsearch
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    networks:
+      - kafka-net
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.6.0
+    container_name: kibana
+    hostname: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
     depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
+      - elasticsearch
     networks:
       - kafka-net
-  #elasticsearch:
-    #image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
-    #container_name: elasticsearch
-    #hostname: elasticsearch
-    #environment:
-      #- discovery.type=single-node
-      #- xpack.security.enabled=false
-    #ports:
-      #- "9200:9200"
-    #networks:
-      #- kafka-net
-  #kibana:
-    #image: docker.elastic.co/kibana/kibana:8.6.0
-    #container_name: kibana
-    #hostname: kibana
-    #environment:
-      #- ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    #ports:
-      #- "5601:5601"
-    #depends_on:
-      #- elasticsearch
-    #networks:
-      #- kafka-net
-  #metricbeat:
-    #image: docker.elastic.co/beats/metricbeat:8.6.0
-    #container_name: metricbeat
-    #volumes:
-      #- ./metricbeat.yaml:/usr/share/metricbeat/metricbeat.yml
-      #- /var/run/docker.sock:/var/run/docker.sock
-    #user: root
-    #depends_on:
-      #- elasticsearch
-      #- kafka
-    #networks:
-      #- kafka-net
-  #postgres:
-    #image: postgres:15
-    #container_name: postgres
-    #hostname: postgres
-    #environment:
-      #POSTGRES_USER: leonardo
-      #POSTGRES_PASSWORD: leo123
-      #POSTGRES_DB: pokemondb
-    #ports:
-      #- "5432:5432"
-    #networks:
-      #- kafka-net
-  #kafka-connect-source-postgres:
-    #image: confluentinc/cp-kafka-connect:7.4.1
-    #container_name: kafka-connect-source-postgres
-    #environment:
-      #CONNECT_BOOTSTRAP_SERVERS: kafka:9092
-      #CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect-source-postgres
-      #CONNECT_GROUP_ID: "connect-source-postgres"
-      #CONNECT_CONFIG_STORAGE_TOPIC: "connect-configs"
-      #CONNECT_OFFSET_STORAGE_TOPIC: "connect-offsets"
-      #CONNECT_STATUS_STORAGE_TOPIC: "connect-status"
-      #CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      #CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-    #ports:
-      #- "8083:8083"
-    #networks:
-      #- kafka-net
-#
-  #kafka-connect-sync-opensearch:
-    #image: confluentinc/cp-kafka-connect:7.4.1
-    #container_name: kafka-connect-sync-opensearch
-    #environment:
-      #CONNECT_BOOTSTRAP_SERVERS: kafka:9092
-      #CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect-sync-opensearch
-      #CONNECT_GROUP_ID: "connect-sync-opensearch"
-      #CONNECT_CONFIG_STORAGE_TOPIC: "connect-configs"
-      #CONNECT_OFFSET_STORAGE_TOPIC: "connect-offsets"
-      #CONNECT_STATUS_STORAGE_TOPIC: "connect-status"
-      #CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      #CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-    #ports:
-      #- "8084:8084"
-    #networks:
-      #- kafka-net
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.6.0
+    container_name: metricbeat
+    volumes:
+      - ./metricbeat.yaml:/usr/share/metricbeat/metricbeat.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    depends_on:
+      - elasticsearch
+      - kafka-cluster
+    networks:
+      - kafka-net
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    hostname: postgres
+    environment:
+      POSTGRES_USER: leonardo
+      POSTGRES_PASSWORD: leo123
+      POSTGRES_DB: pokemondb
+    ports:
+      - "5432:5432"
+    networks:
+      - kafka-net
 networks:
   kafka-net:
     driver: bridge
