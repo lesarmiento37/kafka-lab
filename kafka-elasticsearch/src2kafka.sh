@@ -21,6 +21,30 @@ curl -X POST http://localhost:8083/connectors \
   }
 }'
 
+curl -X DELETE http://localhost:8083/connectors/postgres-pokemon-source-connector
+
+##########Pokemon Postgres Connector####################
+curl -X POST http://localhost:8083/connectors \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "postgres-pokemon-source-connector",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "connection.url": "jdbc:postgresql://postgres:5432/pokemondb",
+    "connection.user": "leonardo",
+    "connection.password": "leo123",
+    "table.whitelist": "pokemon",
+    "mode": "incrementing",
+    "incrementing.column.name": "id",
+    "topic.prefix": "postgres-",
+    "poll.interval.ms": 1000,
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": false,
+    "value.converter.schemas.enable": false
+  }
+}'
+
 ###############Elasticsearch connector##############################
 
 
