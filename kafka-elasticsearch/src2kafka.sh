@@ -22,6 +22,11 @@ curl -X POST http://localhost:8083/connectors \
 }'
 
 curl -X DELETE http://localhost:8083/connectors/postgres-pokemon-source-connector
+curl -X GET http://localhost:8083/connectors/postgres-pokemon-source-connector
+
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic postgres-pokemon
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic pokemon-schema-registry
+
 
 ##########Pokemon Postgres Connector####################
 curl -X POST http://localhost:8083/connectors \
@@ -30,7 +35,7 @@ curl -X POST http://localhost:8083/connectors \
   "name": "postgres-pokemon-source-connector",
   "config": {
     "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
-    "connection.url": "jdbc:postgresql://postgres:5432/pokemondb",
+    "connection.url": "jdbc:postgresql://localhost:5432/pokemondb",
     "connection.user": "leonardo",
     "connection.password": "leo123",
     "table.whitelist": "pokemon",
@@ -67,6 +72,8 @@ curl -X POST http://localhost:8083/connectors \
 }'
 
 #######Validate status###############
+
+curl -X GET http://localhost:8083/connectors/postgres-pokemon-source-connector/status
 
 curl -X GET http://localhost:8083/connectors/elasticsearch-sync-connector/status
 #################
@@ -110,3 +117,21 @@ curl -X PUT http://localhost:8083/connectors/postgres-source-connector/config \
   "key.converter": "org.apache.kafka.connect.json.JsonConverter",
   "value.converter": "org.apache.kafka.connect.json.JsonConverter"
 }'
+
+
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+./bin//kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic postgres-pokemon --from-beginning
+
+./bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic postgres-pokemon
+
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic pokemon-schema-registry --partitions 3 --replication-factor 1
+
+./bin//kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic pokemon-schema-registry --from-beginning
+
+./bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic pokemon-schema-registry
+
+
+
+
+
