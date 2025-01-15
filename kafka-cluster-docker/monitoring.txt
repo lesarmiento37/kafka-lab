@@ -1,0 +1,76 @@
+
+Explanation of `jstat -gc 1 1000 5` Output:
+
+S0C (Survivor Space 0 Capacity):       0.0 KB
+    - The current capacity of the first survivor space (not in use here).
+
+S1C (Survivor Space 1 Capacity):       5120.0 KB
+    - The current capacity of the second survivor space.
+
+S0U (Survivor Space 0 Utilization):    0.0 KB
+    - The amount of space currently used in the first survivor space.
+
+S1U (Survivor Space 1 Utilization):    4536.9 KB
+    - The amount of space currently used in the second survivor space.
+
+EC (Eden Space Capacity):              50176.0 KB
+    - The current capacity of the Eden space (young generation).
+
+EU (Eden Space Utilization):           28672.0 KB
+    - The current usage of the Eden space.
+
+OC (Old Generation Capacity):          993280.0 KB
+    - The current capacity of the old generation space.
+
+OU (Old Generation Utilization):       151834.5 KB
+    - The amount of space currently used in the old generation space.
+
+MC (Metaspace Capacity):               41728.0 KB
+    - The current capacity of the metaspace (for class metadata).
+
+MU (Metaspace Utilization):            41254.6 KB
+    - The amount of space currently used in the metaspace.
+
+CCSC (Compressed Class Space Capacity): 4992.0 KB
+    - The current capacity of the compressed class space.
+
+CCSU (Compressed Class Space Utilization): 4806.8 KB
+    - The amount of space currently used in the compressed class space.
+
+YGC (Young Generation Garbage Collections): 7
+    - The number of young generation garbage collections.
+
+YGCT (Young Generation Garbage Collection Time): 0.050 seconds
+    - The total time spent in young generation garbage collections.
+
+FGC (Full Garbage Collections): 0
+    - The number of full garbage collections (old generation).
+
+FGCT (Full Garbage Collection Time): 0.000 seconds
+    - The total time spent in full garbage collections.
+
+CGC (Concurrent Garbage Collections): 4
+    - The number of concurrent garbage collections.
+
+CGCT (Concurrent Garbage Collection Time): 0.009 seconds
+    - The total time spent in concurrent garbage collections.
+
+GCT (Total Garbage Collection Time): 0.060 seconds
+    - Total time spent in all garbage collections.
+
+Key Takeaway:
+- Most memory is being used in the Eden and Old Generation spaces.
+- Garbage collection has occurred primarily in the young generation (minor GC).
+- No major (full) garbage collections have occurred, indicating good performance for now.
+
+
+#Heap Memory
+
+docker exec -it kafka1 bash
+jcmd 1 GC.heap_info
+
+#Heap stats top
+docker exec -it kafka1 bash
+jstat -gc 1 1000 5
+
+cat /etc/kafka/jvm.options | grep -E "Xms|Xmx"

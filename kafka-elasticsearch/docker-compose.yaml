@@ -14,7 +14,7 @@ services:
       - 9581-9585:9581-9585
       - 9092:9092
     networks:
-      - kafka-net
+      - kafka-con
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
     container_name: elasticsearch
@@ -25,7 +25,7 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - kafka-net
+      - kafka-con
   kibana:
     image: docker.elastic.co/kibana/kibana:8.6.0
     container_name: kibana
@@ -37,7 +37,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - kafka-net
+      - kafka-con
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:8.6.0
     container_name: metricbeat
@@ -49,7 +49,7 @@ services:
       - elasticsearch
       - kafka-cluster
     networks:
-      - kafka-net
+      - kafka-con
   postgres:
     image: postgres:15
     container_name: postgres
@@ -61,7 +61,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - kafka-net
+      - kafka-con
   jupyter:
     image: jupyter/base-notebook:latest
     container_name: jupyter_notebook
@@ -72,7 +72,7 @@ services:
     environment:
       - JUPYTER_TOKEN=leonardoToken123
     networks:
-      - kafka-net
+      - kafka-con
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: pgadmin
@@ -84,11 +84,11 @@ services:
     depends_on:
       - postgres
     networks:
-      - kafka-net
+      - kafka-con
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 networks:
-  kafka-net:
+  kafka-con:
     driver: bridge
 volumes:
   pgadmin-data:
